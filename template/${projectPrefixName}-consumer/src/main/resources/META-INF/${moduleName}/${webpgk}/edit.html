@@ -1,0 +1,33 @@
+<#include "/macro.include"/>
+<#include "/custom.include"/>  
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first> 
+<#noparse><#include "/common/layout-form.html"></#noparse>
+<#noparse><@layout</#noparse> title="${table.remarks}" scripts=["/assets/${moduleName}/${webpgk}/js/${webpgk}.js"] >
+	<div id="busTabs" data-options="border:true,fit:true,tools:'#toolbar'" class="easyui-tabs" >
+		<div title="查看/编辑信息" data-options="" style="padding: 1px 2px 0px 2px;" class="mdContainer">
+			<form action="save" autocomplete="off"  method="post">
+				<input type="hidden" id="id" name="id" value="<@jspEl '(maindata.id)! '/>" />
+				<table class="tb-form" id="formMainInfo">
+					<@generateFormElements />
+				</table>
+			</form>
+		</div>
+	</div>
+	<div id="toolbar" style="display:none;">
+		<a class="easyui-linkbutton" id="save" data-options="plain:true,iconCls:'icon-save'" onclick="rmtManager.doSave()">保存</a>
+	</div>
+	<input type="hidden" id="glPageType" value="edit" />
+<#noparse></@layout></#noparse>
+<#macro generateFormElements>
+	<#list table.columns as column>
+		<#if !column.pk >
+		<tr>
+			<td class="col-title"><#if !column.nullable ><span class="input-required"></#if> <#if !column.nullable ></span></#if></td>
+			<td>
+				<input name="${column.columnNameFirstLower}" class="text${(!column.nullable)?string(" easyui-validatebox","")}"  maxlength="${column.size}" <#if !column.nullable >data-options="required:true"</#if> value="<@jspEl '(maindata.${column.columnNameFirstLower})!'/>"/>
+			</td>
+		</tr>
+		</#if>
+	</#list>
+</#macro>

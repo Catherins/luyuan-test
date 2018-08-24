@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="cn.rmt.wxparty.dao.IUserDAO" >
+<!-- 	<cache type="org.mybatis.caches.ehcache.EhcacheCache">
+		<property name="timeToIdleSeconds" value="600"/>
+	    <property name="timeToLiveSeconds" value="3600"/>
+	    <property name="maxEntriesLocalHeap" value="1000"/>
+	    <property name="maxEntriesLocalDisk" value="100000"/>
+	    <property name="memoryStoreEvictionPolicy" value="LRU"/>
+	</cache>
+ -->	
+    <resultMap id="RM_User" type="cn.rmt.wxparty.model.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+	</resultMap>
+	
+	<resultMap id="RM_UserVO" type="cn.rmt.wxparty.vo.UserVO" extends="RM_User" >
+	
+	</resultMap>
+	
+	<sql id="columns">
+	    <![CDATA[
+		id,username,password,role
+	    ]]>
+	</sql>
+
+	<sql id="where">
+		<where>
+	       <if test="paramBean != null and @Ognl@isNotEmpty(paramBean.id)"> AND id = #{paramBean.id} </if>
+	       <if test="paramBean != null and @Ognl@isNotEmpty(paramBean.username)"> AND username = #{paramBean.username} </if>
+	       <if test="paramBean != null and @Ognl@isNotEmpty(paramBean.password)"> AND password = #{paramBean.password} </if>
+	       <if test="paramBean != null and @Ognl@isNotEmpty(paramBean.role)"> AND role = #{paramBean.role} </if>
+	    </where>
+	</sql>
+	
+	<insert id="insert" keyProperty="id">
+        INSERT INTO user (
+         <if test="@Ognl@isNotEmpty(id)">id</if>
+         <if test="@Ognl@isNotEmpty(username)">,username</if>
+         <if test="@Ognl@isNotEmpty(password)">,password</if>
+         <if test="@Ognl@isNotEmpty(role)">,role</if>
+        ) VALUES (
+        <if test="@Ognl@isNotEmpty(id)">#{id}</if>
+        <if test="@Ognl@isNotEmpty(username)">,#{username}</if>
+        <if test="@Ognl@isNotEmpty(password)">,#{password}</if>
+        <if test="@Ognl@isNotEmpty(role)">,#{role}</if>
+        )
+	</insert>
+
+    <insert id="batchInsert" keyProperty="id">
+        INSERT INTO user (
+            id
+            ,username
+            ,password
+            ,role
+        ) VALUES
+        <foreach collection="entities" item="entity" index="index" separator="," >
+        (
+            #{entity.id}
+            ,#{entity.username}
+            ,#{entity.password}
+            ,#{entity.role}
+        )
+        </foreach>
+    </insert>
+    
+	<update id="update" >
+    <![CDATA[
+        UPDATE user SET
+	        username = #{username} ,
+	        password = #{password} ,
+	        role = #{role} 
+        WHERE 
+	        id = #{id} 
+    ]]>
+	</update>
+
+    <delete id="deleteById">
+    <![CDATA[
+        DELETE FROM user WHERE
+        id = #{id} 
+    ]]>
+    </delete>
+    
+    <delete id="deleteByIds" >
+        DELETE FROM user WHERE 
+        	id IN 
+        	<foreach collection="ids" item="id" open="(" close=")" separator="," >#{id} </foreach>
+    </delete>
+    
+    <select id="findById" resultMap="RM_UserVO">
+		SELECT <include refid="columns"></include> 
+	    <![CDATA[
+		    FROM user
+	        WHERE 
+		        id = #{id} 
+	    ]]>
+	</select>
+	
+    <select id="findPageCount" resultType="long">
+        SELECT count(*) FROM user 
+		<include refid="where"/>    
+    </select>
+    
+    <select id="findPage" resultMap="RM_UserVO">
+    	SELECT * FROM user 
+		<include refid="where"/>
+		<if test="orderBean != null and @Ognl@isNotEmpty(orderBean.orderBy)">
+			ORDER BY ${orderBean.orderBy} ${orderBean.order}
+		</if>
+    </select>
+    
+    <sql id="findBySql">
+    	SELECT * FROM user 
+		<include refid="where"/>
+    </sql>
+    
+    <select id="findBy" resultMap="RM_UserVO">
+    	<include refid="findBySql"/>
+    </select>
+    
+    <select id="findUniqueBy" resultMap="RM_UserVO">
+    	<include refid="findBySql"/>
+    </select>
+    
+	
+</mapper>
+

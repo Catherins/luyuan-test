@@ -1,0 +1,30 @@
+<#include "/common/layout.html">
+<@layout title="" scripts=["/assets/js/common/gridHelper.js","/assets/wxparty/generalBranchCommon/js/generalBranchCommon.js"] styles=[] >
+	<div class="easyui-layout" data-options="border:false,fit:true">
+		<div data-options="region:'north',border:false" class="glParams" style="overflow:hidden;height:50px;padding:10px;">
+			<div style="float: left;">
+				查询1：<input class="text" name="user.xxx1" placeholder="请输入"/>
+				查询2：<input class="text" name="user.xxx2" placeholder="请输入"/>
+				<a class="easyui-linkbutton c6" data-options="iconCls:'icon-search'" onclick="rmtManager.doQuery(true)" >查询</a>
+			</div>
+			<div style="float: right;">
+				<a class="easyui-linkbutton c6" data-options="iconCls:'icon-add'" onclick="rmtManager.toNew()" >登记</a>
+				<a class="easyui-linkbutton c6" data-options="iconCls:'icon-remove'" onclick="rmtManager.doDelete()" >删除</a>
+			</div>
+		</div>
+		<div data-options="region:'center',border:false">
+			<table id="glGrid" style="display:none;" data-options="url:'loadData.html',fit:true,nowrap:false,rownumbers:true,pagination:true,idField:'id'">
+				<thead>
+					<tr>
+						<th data-options="field:'chk',checkbox:true"></th>
+		<th data-options="field:'username',sortable:true,width:100"></th>
+		<th data-options="field:'password',sortable:true,width:100"></th>
+		<th data-options="field:'role',sortable:true,width:100"></th>
+						<th data-options="field:'op',align:'center',width:100,formatter:rmtManager.supportOpFormmater()">操作</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" id="glPageType" value="index" />
+</@layout>
